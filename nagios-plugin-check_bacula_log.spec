@@ -3,13 +3,14 @@
 Summary:	Nagios plugin to check bacula status via bacula log
 Name:		nagios-plugin-%{plugin}
 Version:	0.3
-Release:	1
+Release:	0.11
 License:	GPL v2
 Group:		Networking
 # Source0Download: http://exchange.nagios.org/components/com_mtree/attachment.php?link_id=1327&cf_id=24
 Source0:	nocturnal_nagios_plugins-1.0.tar.gz
 # Source0-md5:	3a50cd7abee1801e578ef0374cf2a072
 URL:		http://exchange.nagios.org/directory/Plugins/Backup-and-Recovery/Bacula/nagios%252Dcheck_bacula/details
+Patch0:		fixes.patch
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
 Requires:	nagios-common
@@ -31,9 +32,11 @@ file.
 
 %prep
 %setup -qc
+%patch0 -p1
+
 cat > nagios.cfg <<'EOF'
 # Usage:
-# %{plugin}
+# %{plugin} -F /var/log/bacula/log
 define command {
 	command_name    %{plugin}
 	command_line    %{plugindir}/%{plugin} $ARG1$
