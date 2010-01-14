@@ -1,26 +1,32 @@
 %define		plugin	check_bacula_log
+%include	/usr/lib/rpm/macros.perl
 Summary:	Nagios plugin to check bacula status via bacula log
 Name:		nagios-plugin-%{plugin}
 Version:	0.3
-Release:	0.1
+Release:	0.5
 License:	GPL v2
 Group:		Networking
 # Source0Download: http://exchange.nagios.org/components/com_mtree/attachment.php?link_id=1327&cf_id=24
 Source0:	nocturnal_nagios_plugins-1.0.tar.gz
 URL:		http://exchange.nagios.org/directory/Plugins/Backup-and-Recovery/Bacula/nagios%252Dcheck_bacula/details
+BuildRequires:	perl-devel >= 1:5.8.0
+BuildRequires:	rpm-perlprov >= 4.1-13
 Requires:	nagios-common
-Requires:	nagios-libs
+Requires:	nagios-plugins-libs
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_sysconfdir	/etc/nagios/plugins
 %define		plugindir	%{_prefix}/lib/nagios/plugins
 
-%description
-Nagios plugin that checks whether the backups made for today with the Bacula
-backup system were succesful. 
+%define		_noautoreq	'perl(utils)'
 
-This requires the Nagios user to have read access to the bacula log file. 
+%description
+Nagios plugin that checks whether the backups made for today with the
+Bacula backup system were succesful.
+
+This requires the Nagios user to have read access to the bacula log
+file.
 
 %prep
 %setup -qc
@@ -34,6 +40,8 @@ define command {
 
 define service {
 	use                     generic-service
+    name                    bacula_log
+    register                0
 	service_description     Bacula job status
 
 	normal_check_interval   86400
