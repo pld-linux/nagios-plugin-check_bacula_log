@@ -1,4 +1,4 @@
---- nagios-plugin-check_bacula_log-0.3/check_bacula	2010-01-14 17:55:52.776266774 +0200
+--- nagios-plugin-check_bacula_log-0.3/check_bacula	2010-01-14 17:58:19.552917792 +0200
 +++ nagios-plugin-check_bacula_log-0.3/check_bacula	2010-01-14 17:48:22.206310890 +0200
 @@ -16,19 +16,19 @@
  #    GNU General Public License for more details.
@@ -24,7 +24,17 @@
  
  sub print_help ();
  sub print_usage ();
-@@ -113,13 +113,13 @@
+@@ -39,8 +39,7 @@
+ my ( $line, $prevline, $stat, $state ,$date, $msg, $status, $skip, $minbackups, $totalbackups, $okbackups, $failedbackups);
+ 
+ $stat="";
+-$date=`/bin/date +'%d-%b-%Y'`;
+-chomp($date);
++$date = strftime("%d-%b-%Y", localtime);
+ 
+ $totalbackups = 0;
+ $okbackups = 0;
+@@ -114,13 +113,13 @@
  
  if($failedbackups > 0){
  	$state = $ERRORS{'WARNING'};
@@ -40,7 +50,7 @@
  }
  
  
-@@ -136,7 +136,7 @@
+@@ -137,7 +136,7 @@
  }
  
  sub print_help () {
