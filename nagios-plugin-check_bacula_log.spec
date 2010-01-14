@@ -8,6 +8,7 @@ License:	GPL v2
 Group:		Networking
 # Source0Download: http://exchange.nagios.org/components/com_mtree/attachment.php?link_id=1327&cf_id=24
 Source0:	nocturnal_nagios_plugins-1.0.tar.gz
+# Source0-md5:	3a50cd7abee1801e578ef0374cf2a072
 URL:		http://exchange.nagios.org/directory/Plugins/Backup-and-Recovery/Bacula/nagios%252Dcheck_bacula/details
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
