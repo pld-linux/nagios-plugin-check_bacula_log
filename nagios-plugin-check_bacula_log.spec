@@ -3,7 +3,7 @@
 Summary:	Nagios plugin to check bacula status via bacula log
 Name:		nagios-plugin-%{plugin}
 Version:	0.3
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Networking
 # Source0Download: http://exchange.nagios.org/components/com_mtree/attachment.php?link_id=1327&cf_id=24
@@ -48,8 +48,8 @@ define service {
     register                0
 	service_description     Bacula job status
 
-	normal_check_interval   86400
-	notification_interval   86400
+	normal_check_interval   1440
+	notification_interval   1440
 	max_check_attempts      1
 
 	check_command           %{plugin}
