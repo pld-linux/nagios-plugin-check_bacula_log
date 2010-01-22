@@ -85,7 +85,6 @@ if (! -r $stat) {
 
 my $state = $ERRORS{'OK'};
 my $msg ="";
-my $skip = 1;
 my $date = strftime("%d-%b-%Y", localtime);
 
 # all messages start with Build OS and end with Termination.
