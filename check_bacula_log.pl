@@ -83,29 +83,79 @@ if (! -r $stat) {
 	exit $ERRORS{'UNKNOWN'};
 }
 
-open(FH, $stat);
 my $state = $ERRORS{'OK'};
 my $msg ="";
 my $skip = 1;
 my $date = strftime("%d-%b-%Y", localtime);
-while (<FH>) {
-	if (/Start time:.+$date/) {
-		$skip = 0;
-	}
-	
-	if($ skip eq 0){
-		if (/Termination:.+Backup (.+)/){
-			if($1 =~ /OK.*/){
-				$okbackups = $okbackups + 1;
-			} else {
-				$failedbackups = $failedbackups +1;
+
+# all messages start with Build OS and end with Termination.
+#  Build OS:               i686-pld-linux-gnu PLD/Linux 2.0 (Ac)
+#  JobId:                  2087
+#  Job:                    stimpy.delfi.lan.2010-01-22_02.05.01.42
+#  Backup Level:           Incremental, since=2010-01-18 02:05:04
+#  Client:                 "stimpy.delfi.lan-fd" 2.4.4 (28Dec08) x86_64-pld-linux-gnu,PLD/Linux,
+#  FileSet:                "stimpy.delfi.lan -FullSet" 2009-10-31 02:05:00
+#  Pool:                   "stimpy.delfi.lan-IncPool" (From Job IncPool override)
+#  Storage:                "stimpy.delfi.lan-File" (From Job resource)
+#  Scheduled time:         22-Jan-2010 02:05:01
+#  Start time:             22-Jan-2010 02:05:02
+#  End time:               22-Jan-2010 02:35:12
+#  Elapsed time:           30 mins 10 secs
+#  Priority:               10
+#  FD Files Written:       0
+#  SD Files Written:       0
+#  FD Bytes Written:       0 (0 B)
+#  SD Bytes Written:       0 (0 B)
+#  Rate:                   0.0 KB/s
+#  Software Compression:   None
+#  VSS:                    no
+#  Storage Encryption:     no
+#  Volume name(s):         
+#  Volume Session Id:      166
+#  Volume Session Time:    1262187014
+#  Last Volume Bytes:      1,280 (1.280 KB)
+#  Non-fatal FD errors:    0
+#  SD Errors:              0
+#  FD termination status:  
+#  SD termination status:  Waiting on FD
+#  Termination:            *** Backup Error ***
+use Data::Dumper;
+
+my %job;
+my @errordetails;
+open(my $fh, '<', $stat);
+while (<$fh>) {
+	if (my($key, $val) = /^\s{2}(\S[^:]+):\s+(.+)$/) {
+		$job{$key} = $val;
+
+		# "Termination" is the last key
+		# if have full info in %job, do some processing
+		next unless $key eq 'Termination';
+
+		# want only todays jobs
+		next unless $job{'Start time'} =~ m/^\Q$date\E\s/;
+
+		# only backup jobs (not restore), ignore Cancelled jobs
+		if (my($status) = $job{'Termination'} =~ /Backup (.*?)(?:\s\*\*\*)?$/) {
+			if ($status ne 'Canceled') {
+				if ($status =~ /OK/){
+					$okbackups = $okbackups + 1;
+				} else {
+					$failedbackups = $failedbackups + 1;
+					# leave out date from job name
+					my ($jobname) = $job{'Job'} =~ /^(.+)\.\d{4}-\d{2}-\d{2}_\d{2}\.\d{2}\.\d{2}\.\d{2}/;
+					my ($backuplevel) = $job{'Backup Level'} =~ /^([^,]+)/;
+					push(@errordetails, "$status: $jobname/$backuplevel");
+				}
+				$totalbackups = $totalbackups + 1;
 			}
-			$totalbackups = $totalbackups + 1;
-			$skip = 1;
 		}
+
+		# clear the job
+		undef %job;
 	}
 }
-close (FH);
+close($fh);
 
 if ($failedbackups > 0){
 	$state = $ERRORS{'WARNING'};
@@ -117,6 +167,9 @@ if ($failedbackups > 0){
 	$state = $ERRORS{'OK'};
 	$msg = "Backups: $okbackups backups completed successfully";
 }
+
+# append error details
+$msg .= "(".join("; ", @errordetails).")" if @errordetails;
 
 if ($state == $ERRORS{'WARNING'}) {
 	print "WARNING - $msg\n";
