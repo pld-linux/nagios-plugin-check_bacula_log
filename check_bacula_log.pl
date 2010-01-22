@@ -16,19 +16,19 @@
 #    GNU General Public License for more details.
 #
 # USAGE:
-# check_internet 
+# check_bacula_log
 #
 ############################################################################
 
 use strict;
 use warnings;
 use Getopt::Long;
+use POSIX qw(strftime);
 use vars qw($opt_V $opt_h $opt_t $opt_F $opt_m $PROGNAME);
-use lib '/usr/lib/nagios/plugins/';
+use lib '/usr/lib/nagios/plugins';
 use utils qw(%ERRORS &print_revision &support);
-use Net::Ping;
 
-$PROGNAME="check_bacula";
+$PROGNAME="check_bacula_log";
 
 sub print_help ();
 sub print_usage ();
@@ -39,8 +39,7 @@ $ENV{'ENV'}='';
 my ( $line, $prevline, $stat, $state ,$date, $msg, $status, $skip, $minbackups, $totalbackups, $okbackups, $failedbackups);
 
 $stat="";
-$date=`/bin/date +'%d-%b-%Y'`;
-chomp($date);
+$date = strftime("%d-%b-%Y", localtime);
 
 $totalbackups = 0;
 $okbackups = 0;
@@ -115,13 +114,13 @@ close (FH);
 
 if($failedbackups > 0){
 	$state = $ERRORS{'WARNING'};
-	$msg = "Backups: $failedbackups Failed, $okbackups completed successfull ";
+	$msg = "Backups: $failedbackups failed, $okbackups completed successfully ";
 } elsif ($totalbackups < $minbackups) {
 	$state = $ERRORS{'WARNING'};
         $msg = "Backups: Only $totalbackups ran ($minbackups expected)";
 } else {
 	$state = $ERRORS{'OK'};
-	$msg = "Backups: $okbackups Backups completed successfull";
+	$msg = "Backups: $okbackups backups completed successfully";
 }
 
 
