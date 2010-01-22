@@ -24,80 +24,77 @@ use strict;
 use warnings;
 use Getopt::Long;
 use POSIX qw(strftime);
-use vars qw($opt_V $opt_h $opt_t $opt_F $opt_m $PROGNAME);
 use lib '/usr/lib/nagios/plugins';
 use utils qw(%ERRORS &print_revision &support);
 
-$PROGNAME="check_bacula_log";
+my $PROGNAME = "check_bacula_log";
+my $REVISION = '$Revision$';
 
-sub print_help ();
-sub print_usage ();
+sub print_help();
+sub print_usage();
 
-$ENV{'PATH'}='';
-$ENV{'BASH_ENV'}='';
-$ENV{'ENV'}='';
-my ( $line, $prevline, $stat, $state ,$date, $msg, $status, $skip, $minbackups, $totalbackups, $okbackups, $failedbackups);
+$ENV{'PATH'} = '';
+$ENV{'BASH_ENV'} = '';
+$ENV{'ENV'} = '';
 
-$stat="";
-$date = strftime("%d-%b-%Y", localtime);
+my $stat = "";
+my $totalbackups = 0;
+my $okbackups = 0;
+my $failedbackups = 0;
+my $minbackups = 0;
 
-$totalbackups = 0;
-$okbackups = 0;
-$failedbackups = 0;
-$minbackups = 0;
-
-#Option checking
+# Option checking
+my %opt;
 Getopt::Long::Configure('bundling');
-$status = GetOptions(
-                'V'   		=> \$opt_V, 
-		'version'    	=> \$opt_V,
-                'h'   		=> \$opt_h, 
-		'help'       	=> \$opt_h,
-		'm=i'		=> \$opt_m,
-		'F=s' 		=> \$opt_F, 
-		'Filename=s'   	=> \$opt_F);
+my $status = GetOptions(
+	'V'             => \$opt{V}, 
+	'version'       => \$opt{V},
+	'h'             => \$opt{h}, 
+	'help'          => \$opt{h},
+	'm=i'           => \$opt{m},
+	'F=s'           => \$opt{F}, 
+	'Filename=s'    => \$opt{F}
+);
 
 # Version
-if ($opt_V) {
-        print_revision($PROGNAME,'$Revision$');
-        exit $ERRORS{'OK'};
+if ($opt{V}) {
+	print_revision($PROGNAME, $REVISION);
+	exit $ERRORS{'OK'};
 }
 
 # Help
-if ($opt_h) {
-        print_help();
-        exit $ERRORS{'OK'};
+if ($opt{h}) {
+	print_help();
+	exit $ERRORS{'OK'};
 }
 
 # Filename supplied
-if ($opt_F) {
-        #$opt_F = shift;
-	chomp($opt_F);
-	$stat = $opt_F;
+if ($opt{F}) {
+	chomp($opt{F});
+	$stat = $opt{F};
 }
 
-if ($opt_m) {
-	$minbackups = $opt_m;
+if ($opt{m}) {
+	$minbackups = $opt{m};
 }
 
-if ( ! -r $stat ) {
+if (! -r $stat) {
 	print "Invalid log file: $stat\n";
-       	exit $ERRORS{'UNKNOWN'};
+	exit $ERRORS{'UNKNOWN'};
 }
 
-open (FH, $stat);
-$state = $ERRORS{'OK'};
-$msg ="";
-
-
-$skip = 1;
+open(FH, $stat);
+my $state = $ERRORS{'OK'};
+my $msg ="";
+my $skip = 1;
+my $date = strftime("%d-%b-%Y", localtime);
 while (<FH>) {
-	if(/Start time:.+$date/) {
+	if (/Start time:.+$date/) {
 		$skip = 0;
 	}
 	
-	if($skip eq 0){
-		if(/Termination:.+Backup (.+)/){
+	if($ skip eq 0){
+		if (/Termination:.+Backup (.+)/){
 			if($1 =~ /OK.*/){
 				$okbackups = $okbackups + 1;
 			} else {
@@ -107,43 +104,39 @@ while (<FH>) {
 			$skip = 1;
 		}
 	}
-		
-
 }
 close (FH);
 
-if($failedbackups > 0){
+if ($failedbackups > 0){
 	$state = $ERRORS{'WARNING'};
 	$msg = "Backups: $failedbackups failed, $okbackups completed successfully ";
 } elsif ($totalbackups < $minbackups) {
 	$state = $ERRORS{'WARNING'};
-        $msg = "Backups: Only $totalbackups ran ($minbackups expected)";
+	$msg = "Backups: Only $totalbackups ran ($minbackups expected)";
 } else {
 	$state = $ERRORS{'OK'};
 	$msg = "Backups: $okbackups backups completed successfully";
 }
 
-
-if ( $state == $ERRORS{'WARNING'} ) {
-        print "WARNING - $msg\n";
-} elsif ( $state == $ERRORS{'OK'} )
-         { print "OK - $msg\n"; }
+if ($state == $ERRORS{'WARNING'}) {
+	print "WARNING - $msg\n";
+} elsif ( $state == $ERRORS{'OK'}) {
+	print "OK - $msg\n";
+}
 exit $state;
 
-
-sub print_usage () {
-        print "Usage: $PROGNAME -F <filename>\n";
+sub print_usage() {
+	print "Usage: $PROGNAME -F <filename>\n";
 }
 
-sub print_help () {
-        print_revision($PROGNAME,'$Revision$');
-        print "Copyright (c) 2005 Guy Van Sanden\n";
-        print "\n";
-        print_usage();
-        print "Checks todays backups of the Bacula system
+sub print_help() {
+	print_revision($PROGNAME, $REVISION);
+	print "Copyright (c) 2005 Guy Van Sanden\n";
+	print "Copyright (c) 2010 Elan Ruusamäe <glen\@delfi.ee>\n";
+	print "\n";
+	print_usage();
+	print "Checks todays backups of the Bacula system
 -F ( --filename=FILE)
         Full path and name to servers file.\n\n";
 support();
 }
-
-
