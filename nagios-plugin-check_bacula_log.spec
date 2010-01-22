@@ -7,6 +7,7 @@ Release:	3
 License:	GPL v2
 Group:		Networking
 Source0:	%{plugin}.pl
+Source1:	%{plugin}.cfg
 URL:		http://exchange.nagios.org/directory/Plugins/Backup-and-Recovery/Bacula/nagios%252Dcheck_bacula/details
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
@@ -30,33 +31,11 @@ file.
 %prep
 %setup -qcT
 
-cat > nagios.cfg <<'EOF'
-# Usage:
-# %{plugin} -F /var/log/bacula/log
-define command {
-	command_name    %{plugin}
-	command_line    %{plugindir}/%{plugin} $ARG1$
-}
-
-define service {
-	use                     generic-service
-    name                    bacula_log
-    register                0
-	service_description     Bacula job status
-
-	normal_check_interval   1440
-	notification_interval   1440
-	max_check_attempts      1
-
-	check_command           %{plugin}
-}
-EOF
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{plugindir}}
 install -p %{SOURCE0} $RPM_BUILD_ROOT%{plugindir}/%{plugin}
-cp -a nagios.cfg $RPM_BUILD_ROOT%{_sysconfdir}/%{plugin}.cfg
+cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/%{plugin}.cfg
 
 %clean
 rm -rf $RPM_BUILD_ROOT
