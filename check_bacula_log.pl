@@ -91,12 +91,12 @@ my $date = strftime("%d-%b-%Y", localtime);
 # all messages start with Build OS and end with Termination.
 #  Build OS:               i686-pld-linux-gnu PLD/Linux 2.0 (Ac)
 #  JobId:                  2087
-#  Job:                    stimpy.delfi.lan.2010-01-22_02.05.01.42
+#  Job:                    stimpy.example.org.2010-01-22_02.05.01.42
 #  Backup Level:           Incremental, since=2010-01-18 02:05:04
-#  Client:                 "stimpy.delfi.lan-fd" 2.4.4 (28Dec08) x86_64-pld-linux-gnu,PLD/Linux,
-#  FileSet:                "stimpy.delfi.lan -FullSet" 2009-10-31 02:05:00
-#  Pool:                   "stimpy.delfi.lan-IncPool" (From Job IncPool override)
-#  Storage:                "stimpy.delfi.lan-File" (From Job resource)
+#  Client:                 "stimpy.example.org-fd" 2.4.4 (28Dec08) x86_64-pld-linux-gnu,PLD/Linux,
+#  FileSet:                "stimpy.example.org -FullSet" 2009-10-31 02:05:00
+#  Pool:                   "stimpy.example.org-IncPool" (From Job IncPool override)
+#  Storage:                "stimpy.example.org-File" (From Job resource)
 #  Scheduled time:         22-Jan-2010 02:05:01
 #  Start time:             22-Jan-2010 02:05:02
 #  End time:               22-Jan-2010 02:35:12
@@ -110,16 +110,15 @@ my $date = strftime("%d-%b-%Y", localtime);
 #  Software Compression:   None
 #  VSS:                    no
 #  Storage Encryption:     no
-#  Volume name(s):         
+#  Volume name(s):
 #  Volume Session Id:      166
 #  Volume Session Time:    1262187014
 #  Last Volume Bytes:      1,280 (1.280 KB)
 #  Non-fatal FD errors:    0
 #  SD Errors:              0
-#  FD termination status:  
+#  FD termination status:
 #  SD termination status:  Waiting on FD
 #  Termination:            *** Backup Error ***
-use Data::Dumper;
 
 my %job;
 my @errordetails;
