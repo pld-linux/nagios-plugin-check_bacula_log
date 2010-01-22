@@ -6,11 +6,8 @@ Version:	0.3
 Release:	3
 License:	GPL v2
 Group:		Networking
-# Source0Download: http://exchange.nagios.org/components/com_mtree/attachment.php?link_id=1327&cf_id=24
-Source0:	nocturnal_nagios_plugins-1.0.tar.gz
-# Source0-md5:	3a50cd7abee1801e578ef0374cf2a072
+Source0:	%{plugin}.pl
 URL:		http://exchange.nagios.org/directory/Plugins/Backup-and-Recovery/Bacula/nagios%252Dcheck_bacula/details
-Patch0:		fixes.patch
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
 Requires:	nagios-common
@@ -31,8 +28,7 @@ This requires the Nagios user to have read access to the bacula log
 file.
 
 %prep
-%setup -qc
-%patch0 -p1
+%setup -qcT
 
 cat > nagios.cfg <<'EOF'
 # Usage:
@@ -59,7 +55,7 @@ EOF
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{plugindir}}
-install -p check_bacula $RPM_BUILD_ROOT%{plugindir}/%{plugin}
+install -p %{SOURCE0} $RPM_BUILD_ROOT%{plugindir}/%{plugin}
 cp -a nagios.cfg $RPM_BUILD_ROOT%{_sysconfdir}/%{plugin}.cfg
 
 %clean
