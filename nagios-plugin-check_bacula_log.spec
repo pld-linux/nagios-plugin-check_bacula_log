@@ -2,7 +2,7 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	Nagios plugin to check bacula status via bacula log
 Name:		nagios-plugin-%{plugin}
-Version:	1.5
+Version:	1.7
 Release:	1
 License:	GPL v2
 Group:		Networking
