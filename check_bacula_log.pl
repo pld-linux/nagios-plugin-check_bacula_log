@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
-
 ############################################################################
 # Nagios Check script to see if an internet connection is working
 #
 # Copyright (C)2005 Guy Van Sanden <nocturn00@gmail.com> - http://nocturn.vsbnet.be
+# Copyright (C)2010 Elan Ruusamäe <glen@pld-linux.org>
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,11 @@
 # USAGE:
 # check_bacula_log
 #
+# SETUP:
+# Depending on your setup, you may need to tweak permissions so Nagios (or
+# Nagios NRPE) would be able to access the log. For example:
+# setfacl -m g:nagcmd:r-x /var/log/bacula
+# setfacl -m g:nagcmd:r-- /var/log/bacula/log
 ############################################################################
 
 use strict;
@@ -141,7 +146,10 @@ while (<$fh>) {
 				} else {
 					$failedbackups = $failedbackups + 1;
 					# leave out date from job name
-					my ($jobname) = $job{'Job'} =~ /^(.+)\.\d{4}-\d{2}-\d{2}_\d{2}\.\d{2}\.\d{2}\.\d{2}/;
+					# supported date formats:
+					# Bacula 2.4: BackupCatalog.2010-10-25_02.10.00.46
+					# Bacula 5.0: BackupCatalog.2010-10-25_02.10.00_46
+					my ($jobname) = $job{'Job'} =~ /^(.+)\.\d{4}-\d{2}-\d{2}_\d{2}\.\d{2}\.\d{2}[_.]\d{2}/;
 					my ($backuplevel) = $job{'Backup Level'} =~ /^([^,]+)/;
 					push(@errordetails, "$status: $jobname/$backuplevel");
 				}
@@ -189,5 +197,5 @@ sub print_help() {
 	print "Checks todays backups of the Bacula system
 -F ( --filename=FILE)
         Full path and name to servers file.\n\n";
-support();
+	support();
 }
