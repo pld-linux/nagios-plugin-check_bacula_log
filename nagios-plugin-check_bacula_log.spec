@@ -8,7 +8,7 @@ License:	GPL v2
 Group:		Networking
 Source0:	%{plugin}.pl
 Source1:	%{plugin}.cfg
-URL:		http://exchange.nagios.org/directory/Plugins/Backup-and-Recovery/Bacula/nagios%252Dcheck_bacula/details
+URL:		http://exchange.nagios.org/directory/Plugins/Backup-and-Recovery/Bacula/check_bacula_log/details
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
 Requires:	nagios-common
