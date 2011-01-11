@@ -2,7 +2,7 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	Nagios plugin to check bacula status via bacula log
 Name:		nagios-plugin-%{plugin}
-Version:	1.7
+Version:	1.8
 Release:	1
 License:	GPL v2
 Group:		Networking
@@ -19,7 +19,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_sysconfdir	/etc/nagios/plugins
 %define		plugindir	%{_prefix}/lib/nagios/plugins
 
-%define		_noautoreq	'perl(utils)'
+%define		_noautoreq	perl(utils)
 
 %description
 Nagios plugin that checks whether the backups made for today with the

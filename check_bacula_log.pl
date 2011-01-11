@@ -46,7 +46,7 @@ my $stat = "";
 my $totalbackups = 0;
 my $okbackups = 0;
 my $failedbackups = 0;
-my $minbackups = 0;
+my $minbackups = 1;
 
 # Option checking
 my %opt;
