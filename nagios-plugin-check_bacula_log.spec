@@ -2,7 +2,7 @@
 Summary:	Nagios plugin to check bacula status via bacula log
 Name:		nagios-plugin-%{plugin}
 Version:	1.8
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Networking
 Source0:	%{plugin}.pl
