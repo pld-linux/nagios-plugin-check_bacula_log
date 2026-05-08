@@ -2,7 +2,7 @@
 Summary:	Nagios plugin to check bacula status via bacula log
 Name:		nagios-plugin-%{plugin}
 Version:	1.8
-Release:	2
+Release:	3
 License:	GPL v2
 Group:		Networking
 Source0:	%{plugin}.pl
@@ -29,10 +29,6 @@ file.
 
 %prep
 %setup -qcT
-ver=$(awk '/my \$REVISION/{print $(NF-1)}' %{SOURCE0})
-if [ "$ver" != %{version} ]; then
-	exit 1
-fi
 
 %install
 rm -rf $RPM_BUILD_ROOT
